@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="weatherState"
+            type="com.example.premweather.domain.WeatherState" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="4dp"
+        android:backgroundTint="@android:color/holo_blue_bright"
+        android:elevation="@dimen/cardview_compat_inset_shadow">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="8dp">
+
+            <TextView
+                android:id="@+id/txt_forecast_date"
+                dateFormat="@{weatherState.date}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Friday, jul 9" />
+
+            <TextView
+                android:id="@+id/txt_forecast_condition"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:text="@{weatherState.description}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_forecast_date"
+                tools:text="Sunny" />
+
+            <TextView
+                android:id="@+id/txt_forecast_humidity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:text='@{"humidity: " + weatherState.humidity}'
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_forecast_condition"
+                tools:text="Humidity: 40%" />
+
+            <TextView
+                android:id="@+id/txt_forecast_precipitation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:text='@{"chance of Precipitation: " + String.valueOf(weatherState.probabilityOfPrecipitation)}'
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_forecast_humidity"
+                tools:text="chance of Precipitation: 10%" />
+
+            <ImageView
+                android:id="@+id/imageView"
+                weatherIcon="@{weatherState.icon}"
+                android:layout_width="77dp"
+                android:layout_height="87dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintBottom_toBottomOf="@+id/txt_forecast_precipitation"
+                app:layout_constraintEnd_toStartOf="@+id/txt_forecast_max_temperature"
+                app:layout_constraintTop_toTopOf="@+id/txt_forecast_date"
+                app:srcCompat="@drawable/ic_rain_day_black" />
+
+            <TextView
+                android:id="@+id/txt_forecast_max_temperature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="17dp"
+                android:text='@{String.valueOf(weatherState.maxTemperature) + "˚C↑"}'
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/txt_forecast_condition"
+                tools:text="40˚" />
+
+            <TextView
+                android:id="@+id/txt_forecast_min_temperature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="17dp"
+                android:text='@{String.valueOf(weatherState.minTemperature) + "˚C↓"}'
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/txt_forecast_humidity"
+                tools:text="23˚" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+</layout>

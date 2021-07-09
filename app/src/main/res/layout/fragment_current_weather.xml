@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="com.example.premweather.ui.Status"/>
+        <import type="android.view.View"/>
+        <variable
+            name="viewModel"
+            type="com.example.premweather.ui.WeatherViewModel" />
+    </data>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            noDataVisibility="@{viewModel.status}">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@{viewModel.status.message}"
+                android:textSize="20sp" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            loadingVisibility="@{viewModel.status}">
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+        </FrameLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/currentWeatherLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/background_gradient"
+            tools:context=".ui.CurrentWeatherFragment"
+            successVisibility="@{viewModel.status}">
+
+            <TextView
+                android:id="@+id/txt_city"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="@color/white"
+                android:textSize="34sp"
+                android:textStyle="bold"
+                android:text='@{viewModel.weatherState.city.name + ", " + viewModel.weatherState.city.country}'
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                tools:text="Mansoura, DK" />
+
+            <TextView
+                android:id="@+id/txt_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                timeFormat="@{viewModel.weatherState.date}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_city"
+                tools:text="8 July 07:15" />
+
+            <ImageView
+                android:id="@+id/img_condition"
+                weatherIcon="@{viewModel.weatherState.icon}"
+                android:layout_width="wrap_content"
+                android:layout_height="110dp"
+                android:layout_marginTop="16dp"
+                android:contentDescription='@{viewModel.weatherState.description + " icon"}'
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_temperature_range"
+                tools:src="@drawable/ic_rain_day_black" />
+
+            <TextView
+                android:id="@+id/txt_temperature_range"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:text='@{String.valueOf(viewModel.weatherState.minTemperature + "˚↑ • " + String.valueOf(viewModel.weatherState.maxTemperature) + "↓")}'
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_date"
+                tools:text="Day 40˚↑ • Night 22˚↓" />
+
+            <TextView
+                android:id="@+id/txt_humidity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:text='@{"Humidity " + String.valueOf(viewModel.weatherState.humidity)}'
+                app:layout_constraintBaseline_toBaselineOf="@+id/txt_temperature_range"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="humidity 42%" />
+
+            <TextView
+                android:id="@+id/txt_temperature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text='@{String.valueOf(viewModel.weatherState.temperature) + "˚C"}'
+                android:textColor="@color/white"
+                android:textSize="60sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/txt_temperature_range"
+                app:layout_constraintTop_toTopOf="@+id/img_condition"
+                tools:text="25˚C" />
+
+            <TextView
+                android:id="@+id/txt_pop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="24dp"
+                android:textColor="@color/white"
+                android:text='@{"chance of precipitation today (" +  String.valueOf(viewModel.weatherState.probabilityOfPrecipitation) + ")"}'
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_temperature"
+                app:layout_constraintVertical_bias="1.0"
+                tools:text="Low chance of precipitation today (10%)" />
+
+            <TextView
+                android:id="@+id/txt_condition"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@{viewModel.weatherState.description}"
+                android:textColor="@color/white"
+                android:textSize="34sp"
+                app:layout_constraintStart_toStartOf="@+id/txt_temperature_range"
+                app:layout_constraintTop_toBottomOf="@+id/txt_temperature"
+                tools:text="Cloudy" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+
+
+</layout>
