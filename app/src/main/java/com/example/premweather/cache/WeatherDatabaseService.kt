@@ -46,7 +46,7 @@ class WeatherDatabaseServiceRoom(private val db: WeatherDatabase) : WeatherDatab
     }
 
     override suspend fun getCurrentWeather(cityName: String): WeatherState? {
-        return db.cityDao().findByCityName(cityName)?.toDomainWeatherState()
+        return db.cityDao().searchByCityName(cityName)?.toDomainWeatherState()
     }
 
     override suspend fun insertForecast(forecast: List<WeatherState>): List<Long> {

@@ -14,7 +14,7 @@ abstract class CityDao : BaseDao<CityEntity>() {
     @Query("SELECT * FROM cities WHERE city_name = :cityName COLLATE NOCASE")
     abstract suspend fun findByCityName(cityName: String): CityEntity?
 
-    @Query("SELECT * FROM cities WHERE city_name like '%' || :cityName || '%' COLLATE NOCASE")
+    @Query("SELECT * FROM cities WHERE city_name like '%'||:cityName||'%' COLLATE NOCASE")
     abstract suspend fun searchByCityName(cityName: String): CityEntity?
 
     @Query(value = "DELETE FROM cities WHERE city_name = :cityName COLLATE NOCASE")

@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.swipeRefreshLayout.setOnRefreshListener {
-            loadData(viewModel, binding.editSearch.text.toString())
+            loadData(viewModel, binding.editSearch.text.toString(), true)
         }
         viewModel.status.observe(this) {
             binding.swipeRefreshLayout.isRefreshing = when (it) {
@@ -46,9 +46,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadData(
         viewModel: WeatherViewModel,
-        cityName: String
+        cityName: String,
+        forceReload: Boolean = false
     ) {
-        viewModel.loadWeatherForCity(cityName)
+        viewModel.loadWeatherForCity(cityName, forceReload)
         viewModel.loadForecast(cityName)
     }
 

@@ -30,11 +30,11 @@ class WeatherViewModel(
     val forecast: LiveData<List<WeatherState>>
         get() = _forecast
 
-    fun loadWeatherForCity(cityName: String) {
+    fun loadWeatherForCity(cityName: String, forceReload: Boolean = false) {
         viewModelScope.launch {
             _status.value = Status.Loading
             kotlin.runCatching {
-                repository.getCurrentWeatherForCity(cityName, forceReload = true)
+                repository.getCurrentWeatherForCity(cityName, forceReload = forceReload)
             }.onSuccess {
                 _weatherState.postValue(it)
                 _status.postValue(Status.Success)
@@ -44,11 +44,11 @@ class WeatherViewModel(
         }
     }
 
-    fun loadForecast(cityName: String) {
+    fun loadForecast(cityName: String, forceReload: Boolean = false) {
         viewModelScope.launch {
             _status.value = Status.Loading
             kotlin.runCatching {
-                repository.getWeatherForecast(cityName, forceReload = true)
+                repository.getWeatherForecast(cityName, forceReload = forceReload)
             }.onSuccess {
                 _forecast.postValue(it)
                 _status.postValue(Status.Success)
