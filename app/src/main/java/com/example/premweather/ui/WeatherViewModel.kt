@@ -1,11 +1,9 @@
 package com.example.premweather.ui
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+import com.example.premweather.cache.WeatherDatabase
 import com.example.premweather.domain.WeatherState
-import com.example.premweather.repositories.WeatherRepository
+import com.example.premweather.repositories.WeatherRepositoryImpl
 import kotlinx.coroutines.launch
 
 sealed class Status(val message: String) {
@@ -15,9 +13,10 @@ sealed class Status(val message: String) {
     object Idle : Status("Select a city to see weather condition")
 }
 
-class WeatherViewModel : ViewModel() {
-
-    private val repository = WeatherRepository()
+class WeatherViewModel(
+    private val database: WeatherDatabase
+) : ViewModel() {
+    private val repository = WeatherRepositoryImpl(database)
 
     private var _status: MutableLiveData<Status> = MutableLiveData(Status.Idle)
     val status: LiveData<Status>
@@ -35,7 +34,7 @@ class WeatherViewModel : ViewModel() {
         viewModelScope.launch {
             _status.value = Status.Loading
             kotlin.runCatching {
-                repository.getCurrentWeatherForCity(cityName)
+                repository.getCurrentWeatherForCity(cityName, forceReload = true)
             }.onSuccess {
                 _weatherState.postValue(it)
                 _status.postValue(Status.Success)
@@ -49,7 +48,7 @@ class WeatherViewModel : ViewModel() {
         viewModelScope.launch {
             _status.value = Status.Loading
             kotlin.runCatching {
-                repository.getWeatherForecast(cityName)
+                repository.getWeatherForecast(cityName, forceReload = true)
             }.onSuccess {
                 _forecast.postValue(it)
                 _status.postValue(Status.Success)
@@ -57,5 +56,15 @@ class WeatherViewModel : ViewModel() {
                 _status.postValue(Status.Failed)
             }
         }
+    }
+
+}
+
+class WeatherViewModelFactory(
+    private val database: WeatherDatabase
+) : ViewModelProvider.NewInstanceFactory() {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        return WeatherViewModel(database) as T
     }
 }
