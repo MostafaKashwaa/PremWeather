@@ -3,15 +3,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <FrameLayout
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.premweather.ui.WeatherViewModel" />
+    </data>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         tools:context=".ui.WeatherForecastFragment">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text='@{viewModel.weatherState.city.name + ", " + viewModel.weatherState.City.country}'
+            android:textAlignment="center"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:paddingBottom="8dp"/>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/forecast_recycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/item_weather_forecast"/>
-    </FrameLayout>
+    </LinearLayout>
 </layout>

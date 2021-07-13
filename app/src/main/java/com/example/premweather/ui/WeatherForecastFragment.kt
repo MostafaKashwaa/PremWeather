@@ -24,6 +24,7 @@ class WeatherForecastFragment : Fragment() {
         )
         val viewModel: WeatherViewModel by viewModels({ requireActivity() }) { defaultViewModelProviderFactory }
         binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewModel = viewModel
         val adapter = WeatherForecastItemAdapter(mutableListOf())
         binding.forecastRecycler.adapter = adapter
 
