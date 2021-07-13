@@ -7,29 +7,39 @@ import com.example.premweather.network.OpenWeatherMapService
 import com.example.premweather.network.toDomain
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.lang.Exception
+import java.lang.RuntimeException
 
 class WeatherRepositoryImpl(val database: WeatherDatabase) : WeatherRepository {
     private val weatherService = OpenWeatherMapService()
     private val dbService = WeatherDatabaseServiceRoom(database)
 
     override suspend fun getCurrentWeatherForCity(cityName: String, forceReload: Boolean): WeatherState {
-        if(forceReload) return updateCurrentWeatherForCity(cityName)
-        return withContext(Dispatchers.IO) {
-            dbService.getCurrentWeather(cityName)?: weatherService.getCurrentWeather(cityName).toDomain().also {
+        return if(forceReload) updateCurrentWeatherForCity(cityName) ?: throw RuntimeException("Unable to fetch data from any source")
+        else withContext(Dispatchers.IO) {
+            dbService.getCurrentWeather(cityName) ?: weatherService.getCurrentWeather(cityName).toDomain().also {
                 dbService.insertCurrentWeather(it)
             }
         }
     }
 
     override suspend fun getWeatherForecast(cityName: String, forceReload: Boolean): List<WeatherState> {
-        if (forceReload) return withContext(Dispatchers.IO) {
-            getForecastByCityName(cityName).also {
+        return if (forceReload) updateWeatherForecastForCity(cityName) ?: throw RuntimeException("Unable to fetch data from any source")
+        else withContext(Dispatchers.IO) {
+            dbService.getWeatherForecast(cityName) ?: getForecastByCityName(cityName).also {
                 dbService.insertForecast(it)
             }
         }
+    }
+
+    private suspend fun updateWeatherForecastForCity(cityName: String): List<WeatherState>? {
         return withContext(Dispatchers.IO) {
-            dbService.getWeatherForecast(cityName)?: getForecastByCityName(cityName).also {
-                dbService.insertForecast(it)
+            try {
+                getForecastByCityName(cityName).also {
+                    dbService.insertForecast(it)
+                }
+            } catch (e: Exception) {
+                dbService.getWeatherForecast(cityName)
             }
         }
     }
@@ -39,11 +49,16 @@ class WeatherRepositoryImpl(val database: WeatherDatabase) : WeatherRepository {
         return weatherService.getWeatherForecast(city.lat, city.lon).toDomain(city.toDomain())
     }
 
-    private suspend fun updateCurrentWeatherForCity(cityName: String): WeatherState {
+    private suspend fun updateCurrentWeatherForCity(cityName: String): WeatherState? {
         return withContext(Dispatchers.IO) {
-            weatherService.getCurrentWeather(cityName).toDomain().also {
-                dbService.insertCurrentWeather(it)
+            try {
+                weatherService.getCurrentWeather(cityName).toDomain().also {
+                    dbService.insertCurrentWeather(it)
+                }
+            } catch (e: Exception) {
+                dbService.getCurrentWeather(cityName)
             }
         }
     }
+
 }
