@@ -8,7 +8,6 @@ import com.example.premweather.openWeatherMapUrl
 import kotlinx.coroutines.*
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import kotlin.coroutines.coroutineContext
 
 class OpenWeatherMapService {
     private val retrofit: Retrofit = Retrofit.Builder()
