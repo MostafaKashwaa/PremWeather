@@ -41,13 +41,17 @@ class OpenWeatherMapService {
                 getWeatherForecast(city.lat, city.lon).toDomain(city.toDomain())
             }
 
-            val currentPOP = weatherForecast.await().first().probabilityOfPrecipitation
-            currentWeather.await().probabilityOfPrecipitation = currentPOP
+            val forecast = weatherForecast.await()
+            val current = currentWeather.await()
+            forecast.forEach { it.city.name = current.city.name }
+            current.city.lat = city.lat
+            current.city.lon = city.lon
+            current.probabilityOfPrecipitation = forecast.first().probabilityOfPrecipitation
 
             return@coroutineScope WeatherData(
                 city.toDomain(),
-                currentWeather.await(),
-                weatherForecast.await()
+                current,
+                forecast
             )
         }
     }

@@ -1,11 +1,9 @@
 package com.example.premweather.ui
 
 import androidx.lifecycle.*
-import com.example.premweather.cache.cityEntityFromDomain
 import com.example.premweather.cache.WeatherDatabase
-import com.example.premweather.domain.WeatherData
 import com.example.premweather.domain.WeatherState
-import com.example.premweather.repositories.WeatherRepository
+import com.example.premweather.repositories.WeatherRepositoryImpl
 import kotlinx.coroutines.launch
 
 sealed class Status(val message: String) {
@@ -18,8 +16,7 @@ sealed class Status(val message: String) {
 class WeatherViewModel(
     private val database: WeatherDatabase
 ) : ViewModel() {
-
-    private val repository = WeatherRepository(database)
+    private val repository = WeatherRepositoryImpl(database)
 
     private var _status: MutableLiveData<Status> = MutableLiveData(Status.Idle)
     val status: LiveData<Status>
@@ -33,15 +30,11 @@ class WeatherViewModel(
     val forecast: LiveData<List<WeatherState>>
         get() = _forecast
 
-    private var _weatherData = MutableLiveData<WeatherData>()
-    val weatherData: LiveData<WeatherData>
-        get() = _weatherData
-
     fun loadWeatherForCity(cityName: String) {
         viewModelScope.launch {
             _status.value = Status.Loading
             kotlin.runCatching {
-                repository.updateCurrentWeatherForCity(cityName)
+                repository.getCurrentWeatherForCity(cityName, forceReload = true)
             }.onSuccess {
                 _weatherState.postValue(it)
                 _status.postValue(Status.Success)
@@ -55,7 +48,7 @@ class WeatherViewModel(
         viewModelScope.launch {
             _status.value = Status.Loading
             kotlin.runCatching {
-                repository.getWeatherForecast(cityName)
+                repository.getWeatherForecast(cityName, forceReload = true)
             }.onSuccess {
                 _forecast.postValue(it)
                 _status.postValue(Status.Success)
@@ -65,19 +58,6 @@ class WeatherViewModel(
         }
     }
 
-    fun loadWeatherData(cityName: String) {
-        viewModelScope.launch {
-            _status.value = Status.Loading
-            kotlin.runCatching {
-                repository.getWeatherData(cityName)
-            }.onSuccess {
-                _weatherData.postValue(it)
-                _status.postValue(Status.Success)
-            }.onFailure {
-                _status.postValue(Status.Failed)
-            }
-        }
-    }
 }
 
 class WeatherViewModelFactory(

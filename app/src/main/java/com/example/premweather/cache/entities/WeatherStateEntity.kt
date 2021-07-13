@@ -18,21 +18,31 @@ import androidx.room.PrimaryKey
     ]
 )
 data class WeatherStateEntity(
+    val date: Long,
+
+    val icon: String,
+
+    val temperature: Int,
+
+    @ColumnInfo(name = WEATHER_STATE_MIN_TEMP)
+    val minTemperature: Int,
+
+    @ColumnInfo(name = WEATHER_STATE_MAX_TEMP)
+    val maxTemperature: Int,
+
+    val humidity: Int,
+
+    val condition: String,
+
+    val description: String,
+
+    @ColumnInfo(name = WEATHER_STATE_POP, defaultValue = "0.0")
+    val probabilityOfPrecipitation: Double,
+
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = WEATHER_STATE_ID)
     val id: Long = 0,
-    val date: Long,
-    val icon: String,
-    val temperature: Int,
-    @ColumnInfo(name = WEATHER_STATE_MIN_TEMP)
-    val minTemperature: Int,
-    @ColumnInfo(name = WEATHER_STATE_MAX_TEMP)
-    val maxTemperature: Int,
-    val humidity: Int,
-    val condition: String,
-    val description: String,
-    @ColumnInfo(name = WEATHER_STATE_POP, defaultValue = "0.0")
-    val probabilityOfPrecipitation: Double,
+
     @ColumnInfo(name = WEATHER_STATE_FK_CITY)
     var cityId: Long = 0
 )

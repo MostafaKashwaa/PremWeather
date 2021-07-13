@@ -45,13 +45,11 @@ fun CityEntity.toDomainWeatherState(): WeatherState {
 
 fun cityEntityFromDomain(weatherState: WeatherState): CityEntity {
     return CityEntity(
-        weatherState.city.id,
         weatherState.city.name,
         weatherState.city.lat,
         weatherState.city.lon,
-        weatherState.city.country!!,
-        WeatherStateEntity(
-            weatherState.id?:0,
+        weatherState.city.country?: "Unknown",
+        currentWeatherState = WeatherStateEntity(
             weatherState.date?:0L,
             weatherState.icon?: "10d",
             weatherState.temperature?: 0,

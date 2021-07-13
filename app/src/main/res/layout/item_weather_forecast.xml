@@ -16,7 +16,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="4dp"
-        android:backgroundTint="@android:color/holo_blue_bright"
+        android:backgroundTint="@android:color/holo_blue_light"
         android:elevation="@dimen/cardview_compat_inset_shadow">
 
         <androidx.constraintlayout.widget.ConstraintLayout

@@ -11,7 +11,7 @@ interface WeatherDatabaseService {
     suspend fun insertForecast(forecast: List<WeatherState>): List<Long>
     suspend fun insertCurrentWeather(weatherState: WeatherState): Long
     suspend fun getCurrentWeather(cityName: String): WeatherState?
-    suspend fun getWeatherForecast(city: City): List<WeatherState>
+    suspend fun getWeatherForecast(cityName: String): List<WeatherState>?
 }
 
 class WeatherDatabaseServiceRoom(private val db: WeatherDatabase) : WeatherDatabaseService {
@@ -35,6 +35,7 @@ class WeatherDatabaseServiceRoom(private val db: WeatherDatabase) : WeatherDatab
         getCityByName(weatherState.city.name)?.let {
             weatherState.city = it
             val entity = cityEntityFromDomain(weatherState)
+            entity.id = it.id
             db.cityDao().updateCity(entity)
             return it.id
         }
@@ -51,6 +52,7 @@ class WeatherDatabaseServiceRoom(private val db: WeatherDatabase) : WeatherDatab
     override suspend fun insertForecast(forecast: List<WeatherState>): List<Long> {
         val forecastEntities = forecast.toEntityList()
         getCityByName(forecast.first().city.name)?.let {
+            db.weatherStateDao().deleteForCity(it.id)
             return insertForecastEntities(forecastEntities, it.id)
         }
 
@@ -59,8 +61,8 @@ class WeatherDatabaseServiceRoom(private val db: WeatherDatabase) : WeatherDatab
     }
 
 
-    override suspend fun getWeatherForecast(city: City): List<WeatherState> {
-        return db.cityDao().getCityForecast(city.name).toDomainStatesList()
+    override suspend fun getWeatherForecast(cityName: String): List<WeatherState>? {
+        return db.cityDao().getCityForecast(cityName)?.toDomainStatesList()
     }
 
 

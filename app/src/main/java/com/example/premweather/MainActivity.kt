@@ -30,13 +30,11 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnGo.setOnClickListener {
             hideSoftKeyboard(it)
-            viewModel.loadWeatherForCity(binding.editSearch.text.toString())
-            viewModel.loadForecast(binding.editSearch.text.toString())
+            loadData(viewModel, binding.editSearch.text.toString())
         }
 
         binding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.loadWeatherForCity(binding.editSearch.text.toString())
-            viewModel.loadForecast(binding.editSearch.text.toString())
+            loadData(viewModel, binding.editSearch.text.toString())
         }
         viewModel.status.observe(this) {
             binding.swipeRefreshLayout.isRefreshing = when (it) {
@@ -44,11 +42,14 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
+    }
 
-//        viewModel.loadWeatherData("Cairo")
-//        viewModel.weatherData.observe(this) {
-//            Log.i("MainActivity", "onCreate: $it")
-//        }
+    private fun loadData(
+        viewModel: WeatherViewModel,
+        cityName: String
+    ) {
+        viewModel.loadWeatherForCity(cityName)
+        viewModel.loadForecast(cityName)
     }
 
     private fun MainActivity.hideSoftKeyboard(currentFocus: View?) {

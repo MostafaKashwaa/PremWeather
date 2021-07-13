@@ -24,7 +24,9 @@ class CurrentWeatherFragment : Fragment() {
             false
         )
         val viewModel: WeatherViewModel by viewModels({ requireActivity() }) {
-            WeatherViewModelFactory(WeatherDatabase.getInstance(requireActivity().applicationContext))
+            WeatherViewModelFactory(
+                WeatherDatabase.getInstance(requireActivity().applicationContext)
+            )
         }
 
         binding.lifecycleOwner = viewLifecycleOwner

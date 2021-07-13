@@ -166,8 +166,29 @@ class DatabaseTest {
         runBlocking {
             val forecast = sampleForecast()
             val forecastIds = dbService.insertForecast(forecast)
-            val resultForecast = dbService.getWeatherForecast(forecast[1].city)
-            assertEquals(39, resultForecast.first().maxTemperature)
+            val resultForecast = dbService.getWeatherForecast(forecast[1].city.name)
+            assertEquals(39, resultForecast?.first()?.maxTemperature)
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun getWeatherForecast_returnsEmptyListIfNotExist() {
+        runBlocking {
+            val city = sampleCity()
+            dbService.insertCity(city)
+            val forecast = dbService.getWeatherForecast(city.name)
+            assertEquals(emptyList<WeatherState>(), forecast)
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun getWeatherForecast_returnsNullIfCityNotExist() {
+        runBlocking {
+            val city = sampleCity()
+            val forecast = dbService.getWeatherForecast(city.name)
+            assertNull(forecast)
         }
     }
 
@@ -179,9 +200,9 @@ class DatabaseTest {
             val cityId = dbService.insertCity(city)
             val createdCity = dbService.getCity(cityId)
             dbService.insertForecast(sampleForecast())
-            val forecast = dbService.getWeatherForecast(city)
-            assertEquals(forecast.first().city.name, createdCity?.name)
-            assertEquals(23, forecast.first().humidity)
+            val forecast = dbService.getWeatherForecast(city.name)
+            assertEquals(forecast?.first()?.city?.name, createdCity?.name)
+            assertEquals(23, forecast?.first()?.humidity)
         }
     }
 
